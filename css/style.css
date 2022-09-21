@@ -1,0 +1,16 @@
+body {
+    background-color: black;
+    color:white;
+}
+  
+.cell {
+    width: 40px;
+    height: 40px;
+    text-align: center;
+    color: rgb(66, 62, 62);
+    background-color: #ff6f92;
+}
+
+.shown-cell {
+    background-color: #ffe5ec;
+}
