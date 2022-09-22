@@ -20,11 +20,6 @@ function buildBoard() {
         }
     }
 
-    if (gGame.isOn) {
-        var minesPos = getMinesPos()
-        setMines(board, minesPos)
-        setMinesNegsCount(board)
-    }
     return board
 }
 

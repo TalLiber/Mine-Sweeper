@@ -5,13 +5,18 @@ const MARK = '⭐️'
 const START_BTN = '😃'
 const LOOSER = '😵'
 const WINNER = '🤩'
+const LIFE = '❤️'
+const HINT = '💡'
 
 var gGame = {
     isOn: false,
+    isGameEnd: false,
+    isHintOn: false,
+    secsPassed: 0,
     shownCount: 0,
     markedCount: 0,
-    secsPassed: 0,
-    isGameEnd: false
+    livesCount: 3,
+    hintsCount: 3
 }
 
 var gLevel = {
@@ -29,7 +34,6 @@ function initGame() {
 
     resetGame()
     gBoard = buildBoard()
-    console.log(gBoard)
     renderBoard(gBoard)
 
 }
@@ -57,10 +61,14 @@ function getRandomPos() {
     return poses
 }
 
-function setMines(board, minesPos) {
+function setMines() {
+    var minesPos = getMinesPos()
+
     for (var i = 0; i < minesPos.length; i++) {
-        board[minesPos[i].i][minesPos[i].j].isMine = true
+        gBoard[minesPos[i].i][minesPos[i].j].isMine = true
     }
+
+    setMinesNegsCount(gBoard)
 }
 
 function setMinesNegsCount(board) {
@@ -76,29 +84,29 @@ function setMinesNegsCount(board) {
 function cellClicked(elCell, i, j) {
     //TO DO: Called when a cell (td) is clicked
     // document.addEventListener('contextmenu', event => event.preventDefault())
+    if (gBoard[i][j].isShown || gBoard[i][j].isMarked) return
     if (gGame.isGameEnd) return
+    if (gGame.isHintOn) {
+        hintModeOn(i, j)
+        return
+    }
     if (!gGame.isOn) {
         gGame.isOn = true
         showTimer()
         gFirstPos = { i, j }
-        gBoard = buildBoard()
+        setMines()
     }
 
 
-    if (gBoard[i][j].isMine) {
-        // debugger
-        gameOver(LOOSER)
-        console.log('looser')
-    }
-    if (gBoard[i][j].minesAroundCount) {
+    if (gBoard[i][j].isMine) checkLives(i, j)
+    else if (gBoard[i][j].minesAroundCount) {
         gBoard[i][j].isShown = true
         gBoard[i][j].isMarked = false
         gGame.shownCount++
     } else expandShown(gBoard, elCell, i, j)
 
-    checkGameOver()
-
     renderBoard(gBoard)
+    checkGameOver()
 }
 
 function cellMarked(event, i, j) {
@@ -106,7 +114,7 @@ function cellMarked(event, i, j) {
     //Search the web (and implement) how to hide the context menu on right click
     event.preventDefault()
         // console.log(gGame.isOn);
-    if (!gGame.isOn || gGame.isGameEnd) return
+    if (!gGame.isOn || gGame.isGameEnd || gBoard[i][j].isShown) return
 
     if (!gBoard[i][j].isMarked) {
         gBoard[i][j].isMarked = true
@@ -117,15 +125,15 @@ function cellMarked(event, i, j) {
     }
     updateMinesShow()
 
-    checkGameOver()
     renderBoard(gBoard)
+    checkGameOver()
 
 }
 
 function checkGameOver() {
     //TO DO: Game ends when all mines are marked, and all the other cells are shown
     const shownTotal = gLevel.SIZE * gLevel.SIZE - gLevel.MINES
-        // console.log(shownTotal, gGame.shownCount ,gGame.markedCount);
+    console.log(shownTotal, gGame.shownCount, gGame.markedCount);
     if (gGame.markedCount === gLevel.MINES && gGame.shownCount === shownTotal) {
         console.log('winner');
         gameOver(WINNER)
@@ -201,12 +209,20 @@ function resetGame() {
     gGame.shownCount = 0
     gGame.markedCount = 0
     gGame.secsPassed = 0
+    gGame.livesCount = 3
+    gGame.hintsCount = 3
     gGame.isOn = false
     gGame.isGameEnd = false
 
     clearInterval(gtimerInterval)
     var elTimer = document.querySelector('.status-container .timer')
     elTimer.innerHTML = `Elapsed Time: 00:000`
+
+    var elHints = document.querySelector('.hints')
+    elHints.innerHTML = `${HINT} ${HINT} ${HINT}`
+
+    var elLives = document.querySelector('.lives')
+    elLives.innerHTML = `${LIFE} ${LIFE} ${LIFE}`
 
     updateMinesShow()
 
@@ -219,4 +235,71 @@ function setLevel(size, mines) {
     gLevel.MINES = mines
 
     initGame()
+}
+
+function checkLives(idxI, idxJ) {
+    if (gGame.livesCount) {
+        gGame.livesCount--;
+        var livesStr = ''
+        var elLives = document.querySelector('.lives')
+
+        for (var i = 0; i < gGame.livesCount; i++) {
+            livesStr += `${LIFE} `
+        }
+        elLives.innerText = livesStr
+
+        gBoard[idxI][idxJ].isShown = true
+        gGame.markedCount++;
+        updateMinesShow()
+    } else gameOver(LOOSER)
+}
+
+function hintClicked(elHints) {
+    elHints.classList.add('hint-clicked')
+    gGame.isHintOn = true
+}
+
+function hintModeOn(idxI, idxJ) {
+    var neighborsIdx = []
+
+    for (var i = idxI - 1; i <= idxI + 1; i++) {
+        if (i < 0 || i >= gLevel.SIZE) continue
+
+        for (var j = idxJ - 1; j <= idxJ + 1; j++) {
+            if (j < 0 || j >= gLevel.SIZE) continue
+                // console.log(i, j);
+            if (!gBoard[i][j].isShown) {
+                gBoard[i][j].isShown = true
+                neighborsIdx.push({ idxI: i, idxJ: j })
+            }
+
+        }
+    }
+
+    renderBoard(gBoard)
+    setTimeout(hintModeOff, 1000, neighborsIdx)
+}
+
+function hintModeOff(neighborsIdx) {
+    for (var i = 0; i < neighborsIdx.length; i++) {
+        gBoard[neighborsIdx[i].idxI][neighborsIdx[i].idxJ].isShown = false
+    }
+
+    gGame.isHintOn = false
+    renderBoard(gBoard)
+
+    updateHintsShow()
+}
+
+function updateHintsShow() {
+    gGame.hintsCount--;
+
+    var hintsStr = ''
+    for (var i = 0; i < gGame.hintsCount; i++) {
+        hintsStr += `${HINT} `
+    }
+
+    var elHints = document.querySelector('.hints')
+    elHints.innerHTML = hintsStr
+    elHints.classList.remove('hint-clicked')
 }
