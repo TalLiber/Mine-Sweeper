@@ -31,11 +31,11 @@ var gtimerInterval
 function initGame() {
     //TO DO: This is called when page loads
     // debugger
-
     resetGame()
     gBoard = buildBoard()
     renderBoard(gBoard)
-
+    startBestScore()
+    showBestScores()
 }
 
 function getMinesPos() {
@@ -172,6 +172,7 @@ function gameOver(status) {
     elBtn.innerHTML = `${status}`
 
     if (status === LOOSER) showAllMines()
+    else checkBestScore()
 }
 
 function showAllMines() {
@@ -302,4 +303,41 @@ function updateHintsShow() {
     var elHints = document.querySelector('.hints')
     elHints.innerHTML = hintsStr
     elHints.classList.remove('hint-clicked')
+}
+
+function startBestScore() {
+    if (!localStorage.getItem('bestEasy')) localStorage.setItem('bestEasy', 999)
+    if (!localStorage.getItem('bestHard')) localStorage.setItem('bestHard', 999)
+    if (!localStorage.getItem('bestExpert')) localStorage.setItem('bestExpert', 999)
+}
+
+function checkBestScore() {
+    if (gLevel.SIZE === 4) {
+        if (gGame.secsPassed < localStorage.getItem('bestEasy')) {
+            localStorage.setItem('bestEasy', gGame.secsPassed)
+        }
+    }
+
+    if (gLevel.SIZE === 8) {
+        if (gGame.secsPassed < localStorage.getItem('bestHard')) {
+            localStorage.setItem('bestHard', gGame.secsPassed)
+        }
+    }
+
+    if (gLevel.SIZE === 12) {
+        if (gGame.secsPassed < localStorage.getItem('bestExpert')) {
+            localStorage.setItem('bestExpert', gGame.secsPassed)
+        }
+    }
+
+    showBestScores()
+}
+
+function showBestScores() {
+    var elBestScores = document.querySelector('.best-scores')
+    var bestScoreEasy = localStorage.getItem('bestEasy')
+    var bestScoreHard = localStorage.getItem('bestHard')
+    var bestScoreExpert = localStorage.getItem('bestExpert')
+
+    elBestScores.innerHTML = `Best easy score: ${bestScoreEasy} Best Hard score: ${bestScoreHard} Best Expert Score: ${bestScoreExpert}`
 }

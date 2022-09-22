@@ -74,7 +74,8 @@ h1 {
 }
 
 .status-container,
-.level-container {
+.level-container,
+.best-scores {
     background-color: #fa8ea9;
     height: 40px;
     width: 300px;
@@ -117,4 +118,8 @@ select {
 
 .hint-clicked {
     opacity: 0.5;
+}
+
+.best-scores {
+    margin-top: 20px;
 }
