@@ -1,16 +1,29 @@
+* {
+    font-family: "Gill Sans", sans-serif;
+    align-items: center;  
+
+}
 body {
     background-color: black;
     color:white;
 }
-  
+.board-container table{
+    align-items: center;  
+    margin: auto;
+    cursor: pointer;
+    margin-bottom: 20px;
+}
 .cell {
     width: 40px;
     height: 40px;
     text-align: center;
-    color: rgb(66, 62, 62);
+    color: #850E35;
     background-color: #ff6f92;
+}
+.cell:hover{
+    background-color: #FF8FAB;
 }
 
 .shown-cell {
-    background-color: #ffe5ec;
+    background-color: #FFC2D1;
 }
