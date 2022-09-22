@@ -28,6 +28,8 @@ var gLevel = {
 var gBoard = []
 var gFirstPos = {}
 var gtimerInterval
+var gLastPoses = []
+var gLastExpandShownPoses = []
 
 function initGame() {
     //TO DO: This is called when page loads
@@ -103,8 +105,13 @@ function cellClicked(elCell, i, j) {
     else if (gBoard[i][j].minesAroundCount) {
         gBoard[i][j].isShown = true
         gBoard[i][j].isMarked = false
-        gGame.shownCount++
-    } else expandShown(gBoard, elCell, i, j)
+        gGame.shownCount++;
+        gLastPoses.push({ i, j })
+    } else {
+        expandShown(gBoard, elCell, i, j)
+        gLastPoses.push(gLastExpandShownPoses)
+        gLastExpandShownPoses = []
+    }
 
     renderBoard(gBoard)
     checkGameOver()
@@ -149,9 +156,10 @@ function expandShown(board, elCell, i, j) {
         board[i][j].isMine || board[i][j].isShown) return
 
     board[i][j].isShown = true
-    gGame.shownCount++
+    gLastExpandShownPoses.push({ i, j })
+    gGame.shownCount++;
 
-        if (board[i][j].minesAroundCount) return
+    if (board[i][j].minesAroundCount) return
 
     for (var idxI = i - 1; idxI <= i + 1; idxI++) {
         for (var idxJ = j - 1; idxJ <= j + 1; idxJ++) {
@@ -255,6 +263,7 @@ function checkLives(idxI, idxJ) {
         elLives.innerText = livesStr
 
         gBoard[idxI][idxJ].isShown = true
+        gLastPoses.push({ i: idxI, j: idxJ })
         gGame.markedCount++;
         updateMinesShow()
     } else gameOver(LOOSER)
@@ -349,7 +358,7 @@ function showBestScores() {
 
 function safeClickStart(elBtn) {
 
-    // if (!gGame.isOn || gGame.isGameEnd) return
+    if (!gGame.isOn || gGame.isGameEnd) return
     var safeCell = findUnshownCell()
     if (!safeCell) return //no such cells
     var elCell = document.querySelector(`[data-i="${safeCell.i}"][data-j="${safeCell.i}"]`)
@@ -360,4 +369,21 @@ function safeClickStart(elBtn) {
     elBtn.innerHTML = `Safe Click ${gGame.safeClicksCount} clicks available`
 
     setTimeout(() => { elCell.classList.remove('safe-cell') }, 3000)
+}
+
+function undo() {
+    if (!gLastPoses) return
+    var lastMove = gLastPoses.pop()
+
+    if (Array.isArray(lastMove)) {
+        while (lastMove.length) {
+            var expandMove = lastMove.pop()
+            gBoard[expandMove.i][expandMove.j].isShown = false
+        }
+        console.log(lastMove);
+    } else {
+        gBoard[lastMove.i][lastMove.j].isShown = false
+    }
+
+    renderBoard(gBoard)
 }

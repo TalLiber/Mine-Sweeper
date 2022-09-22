@@ -31,62 +31,6 @@ function findUnshownCell() {
     return unshownCells[getRandomInt(0, unshownCells.length)]
 }
 
-// location such as: {i: 2, j: 7}
-function renderCell(location, value) {
-    // Select the elCell and set the value
-    const elCell = document.querySelector(`.cell-${location.i}-${location.j}`)
-    elCell.innerHTML = value
-}
-
 function getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min) + min)
-}
-
-function getRandomColor() {
-    var letters = '0123456789ABCDEF';
-    var color = '#';
-    for (var i = 0; i < 6; i++) {
-        color += letters[Math.floor(Math.random() * 16)];
-    }
-    return color;
-}
-
-function createNums() {
-    var nums = []
-
-    for (var i = 0; i < gBoardLength * gBoardLength; i++) {
-        nums.push(i + 1)
-    }
-
-    return nums
-}
-
-function getNum(nums) {
-    var numIdx = getRandomInt(0, nums.length)
-    return nums.splice(numIdx, 1)[0]
-}
-
-
-function createMat(ROWS, COLS) {
-    var mat = []
-    for (var i = 0; i < ROWS; i++) {
-        var row = []
-        for (var j = 0; j < COLS; j++) {
-            row.push('')
-        }
-        mat.push(row)
-    }
-    return mat
-}
-
-function copyMat(mat) {
-    var newMat = []
-
-    for (var i = 0; i < mat.length; i++) {
-        newMat[i] = [];
-        for (var j = 0; j < mat[0].length; j++) {
-            newMat[i][j] = mat[i][j];
-        }
-    }
-    return newMat;
 }
