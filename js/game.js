@@ -5,13 +5,12 @@ function buildBoard() {
     //Call setMinesNegsCount() 
     //Return the created board
 
-    const SIZE = gLevel.SIZE
     const board = []
 
-    for (var i = 0; i < SIZE; i++) {
+    for (var i = 0; i < gLevel.SIZE; i++) {
         board.push([])
 
-        for (var j = 0; j < SIZE; j++) {
+        for (var j = 0; j < gLevel.SIZE; j++) {
             board[i][j] = {
                 minesAroundCount: 0,
                 isShown: false,
@@ -44,6 +43,7 @@ function renderBoard(board) {
 
             if (board[i][j].isShown) {
                 cellContent = (gBoard[i][j].isMine) ? MINE : board[i][j].minesAroundCount
+                if (!cellContent) cellContent = ''
                 className += ' shown-cell'
             }
             if (board[i][j].isMarked) cellContent = MARK

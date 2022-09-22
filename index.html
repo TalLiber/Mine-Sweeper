@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -7,14 +8,34 @@
     <title>Mine Sweeper</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
+
 <body onload="initGame()">
     <h1>Mine Sweeper</h1>
-    <button onclick="initGame()">start</button>
+    <section class="level-container">
+        <button onclick="setLevel(4, 2)">Easy</button>
+        <button onclick="setLevel(8, 14)">Hard</button>
+        <button onclick="setLevel(12, 32)">Expert</button>
+    </section>
+    <!-- <div class="levels">
+        <select name="" onchange="initGame(event.target.value)">
+          <option value="BEGINNER_SIZE">Easy</option>
+          <option value="MEDIUM_SIZE">Hard</option>
+          <option value="EXPERT_SIZE">Expert!</option>
+        </select>
+    </div> -->
+    <div class="start-btn-container">
+        <button class="start-btn" onclick="initGame(gLevel)">😃</button>
+    </div>
     <div class="board-container"></div>
 
-    <!-- <div class="dd" data-i="1" data-j="2"></div> -->
+    <div class="status-container">
+        <span class="timer"></span>
+        <span class="mines"></span>
+    </div>
+
     <script src="js/main.js"></script>
     <script src="js/utils.js"></script>
     <script src="js/game.js"></script>
 </body>
+
 </html>
