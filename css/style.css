@@ -78,7 +78,7 @@ h1 {
 .best-scores {
     background-color: #fa8ea9;
     height: 40px;
-    width: 300px;
+    width: 500px;
     margin: auto;
     border-radius: 5px;
     font-size: 15px;
@@ -122,4 +122,12 @@ select {
 
 .best-scores {
     margin-top: 20px;
+}
+
+.safe-click {
+    background-color: #d8e2dc;
+}
+
+.safe-cell {
+    background-color: peachpuff;
 }

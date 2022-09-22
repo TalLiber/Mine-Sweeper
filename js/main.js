@@ -16,6 +16,7 @@ var gGame = {
     shownCount: 0,
     markedCount: 0,
     livesCount: 3,
+    safeClicksCount: 3,
     hintsCount: 3
 }
 
@@ -212,6 +213,7 @@ function resetGame() {
     gGame.secsPassed = 0
     gGame.livesCount = 3
     gGame.hintsCount = 3
+    gGame.safeClicksCount = 3
     gGame.isOn = false
     gGame.isGameEnd = false
 
@@ -229,6 +231,9 @@ function resetGame() {
 
     var elBtn = document.querySelector('.start-btn')
     elBtn.innerHTML = `${START_BTN}`
+
+    var elSafeBtn = document.querySelector('.safe-click')
+    elSafeBtn.innerHTML = `Safe Click ${gGame.safeClicksCount} clicks available`
 }
 
 function setLevel(size, mines) {
@@ -340,4 +345,19 @@ function showBestScores() {
     var bestScoreExpert = localStorage.getItem('bestExpert')
 
     elBestScores.innerHTML = `Best easy score: ${bestScoreEasy} Best Hard score: ${bestScoreHard} Best Expert Score: ${bestScoreExpert}`
+}
+
+function safeClickStart(elBtn) {
+
+    // if (!gGame.isOn || gGame.isGameEnd) return
+    var safeCell = findUnshownCell()
+    if (!safeCell) return //no such cells
+    var elCell = document.querySelector(`[data-i="${safeCell.i}"][data-j="${safeCell.i}"]`)
+
+    elCell.classList.add('safe-cell')
+
+    gGame.safeClicksCount--;
+    elBtn.innerHTML = `Safe Click ${gGame.safeClicksCount} clicks available`
+
+    setTimeout(() => { elCell.classList.remove('safe-cell') }, 3000)
 }

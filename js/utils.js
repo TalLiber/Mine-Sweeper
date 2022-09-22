@@ -5,18 +5,30 @@ function countNeighbors(board, cellI, cellJ) {
     var neighborsCount = 0
 
     for (var i = cellI - 1; i <= cellI + 1; i++) {
-        
+
         if (i < 0 || i >= board.length) continue
         for (var j = cellJ - 1; j <= cellJ + 1; j++) {
-            
+
             if (j < 0 || j >= board[i].length) continue
             if (i === cellI && j === cellJ) continue
             if (board[i][j].isMine) neighborsCount++;
-            
+
         }
     }
-    
+
     return neighborsCount
+}
+//V
+function findUnshownCell() {
+    var unshownCells = []
+        // debugger
+    for (var i = 0; i < gLevel.SIZE; i++) {
+        for (var j = 0; j < gLevel.SIZE; j++) {
+            if (!gBoard[i][j].isShown && !gBoard[i][j].isMine) unshownCells.push({ i, j })
+        }
+    }
+
+    return unshownCells[getRandomInt(0, unshownCells.length)]
 }
 
 // location such as: {i: 2, j: 7}
@@ -41,17 +53,17 @@ function getRandomColor() {
 
 function createNums() {
     var nums = []
-    
+
     for (var i = 0; i < gBoardLength * gBoardLength; i++) {
         nums.push(i + 1)
     }
-    
+
     return nums
 }
 
 function getNum(nums) {
     var numIdx = getRandomInt(0, nums.length)
-     return nums.splice(numIdx, 1)[0]
+    return nums.splice(numIdx, 1)[0]
 }
 
 
@@ -69,7 +81,7 @@ function createMat(ROWS, COLS) {
 
 function copyMat(mat) {
     var newMat = []
-    
+
     for (var i = 0; i < mat.length; i++) {
         newMat[i] = [];
         for (var j = 0; j < mat[0].length; j++) {
@@ -77,18 +89,4 @@ function copyMat(mat) {
         }
     }
     return newMat;
-}
-
-function findEmptyCells() {
-    var emptyCells = []
-
-    for (var i = 1; i < gBoard.length - 1; i++) {
-        for (var j = 1; j < gBoard[i].length - 1; j++) {
-            if (gBoard[i][j].gameElement === null) emptyCells.push({ i, j })
-        }
-    }
-
-    var emptyCellCoor = emptyCells[getRandomInt(0, emptyCells.length)]
-    var i = emptyCellCoor.i
-    var j = emptyCellCoor.j
 }

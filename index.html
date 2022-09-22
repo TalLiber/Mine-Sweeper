@@ -12,6 +12,9 @@
 <body onload="initGame()">
     <h1>Mine Sweeper</h1>
     <section class="level-container">
+        <button class="safe-click" onclick="safeClickStart(this)">
+        Safe click
+      </button>
         <span onclick="hintClicked(this)" class="hints"></span>
         <span class="lives"></span>
         <button onclick="setLevel(4, 2)">Easy</button>
