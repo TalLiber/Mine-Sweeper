@@ -18,10 +18,20 @@ function countNeighbors(board, cellI, cellJ) {
 
     return neighborsCount
 }
-//V
+// V
+// function findUnshownCell() {
+//     for (var i = 0; i < gLevel.SIZE; i++) {
+//         for (var j = 0; j < gLevel.SIZE; j++) {
+//             if (!gBoard[i][j].isShown && !gBoard[i][j].isMine) {
+//                 console.log(i, j);
+//                 return { i, j }
+//             }
+//         }
+//     }
+// }
 function findUnshownCell() {
     var unshownCells = []
-        // debugger
+    debugger
     for (var i = 0; i < gLevel.SIZE; i++) {
         for (var j = 0; j < gLevel.SIZE; j++) {
             if (!gBoard[i][j].isShown && !gBoard[i][j].isMine) unshownCells.push({ i, j })

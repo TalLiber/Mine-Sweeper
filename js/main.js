@@ -358,11 +358,11 @@ function showBestScores() {
 
 function safeClickStart(elBtn) {
 
-    if (!gGame.isOn || gGame.isGameEnd) return
+    if (!gGame.isOn || gGame.isGameEnd || !gGame.safeClicksCount) return
     var safeCell = findUnshownCell()
     if (!safeCell) return //no such cells
-    var elCell = document.querySelector(`[data-i="${safeCell.i}"][data-j="${safeCell.i}"]`)
-
+    var elCell = document.querySelector(`[data-i="${safeCell.i}"][data-j="${safeCell.j}"]`)
+    console.log(elCell);
     elCell.classList.add('safe-cell')
 
     gGame.safeClicksCount--;
