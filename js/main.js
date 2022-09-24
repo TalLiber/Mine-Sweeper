@@ -12,12 +12,14 @@ var gGame = {
     isOn: false,
     isGameEnd: false,
     isHintOn: false,
+    isManuallyOn: false,
     secsPassed: 0,
     shownCount: 0,
     markedCount: 0,
     livesCount: 3,
     safeClicksCount: 3,
-    hintsCount: 3
+    hintsCount: 3,
+    manuallyCounter: 0
 }
 
 var gLevel = {
@@ -64,7 +66,7 @@ function getRandomPos() {
     return poses
 }
 
-function setMines() {
+function setMinesRandom() {
     var minesPos = getMinesPos()
 
     for (var i = 0; i < minesPos.length; i++) {
@@ -89,6 +91,10 @@ function cellClicked(elCell, i, j) {
     // document.addEventListener('contextmenu', event => event.preventDefault())
     if (gBoard[i][j].isShown || gBoard[i][j].isMarked) return
     if (gGame.isGameEnd) return
+    if (gGame.isManuallyOn && gGame.manuallyCounter) {
+        setMinesManually(i, j)
+        return
+    }
     if (gGame.isHintOn) {
         hintModeOn(i, j)
         return
@@ -97,7 +103,7 @@ function cellClicked(elCell, i, j) {
         gGame.isOn = true
         showTimer()
         gFirstPos = { i, j }
-        setMines()
+        if (!gGame.isManuallyOn) setMinesRandom()
     }
 
 
@@ -224,8 +230,10 @@ function resetGame() {
     gGame.livesCount = 3
     gGame.hintsCount = 3
     gGame.safeClicksCount = 3
+    gGame.manuallyCounter = gLevel.MINES
     gGame.isOn = false
     gGame.isGameEnd = false
+    gGame.isManuallyOn = false
 
     clearInterval(gtimerInterval)
     var elTimer = document.querySelector('.status-container .timer')
@@ -238,6 +246,7 @@ function resetGame() {
     elLives.innerHTML = `${LIFE} ${LIFE} ${LIFE}`
 
     updateMinesShow()
+    updateManualBar()
 
     var elBtn = document.querySelector('.start-btn')
     elBtn.innerHTML = `${START_BTN}`
@@ -403,4 +412,54 @@ function undo() {
     }
 
     renderBoard(gBoard)
+}
+
+function manuallyCreate() {
+    gGame.isManuallyOn = true
+
+    updateManualBar()
+}
+
+function setMinesManually(i, j) {
+
+    gBoard[i][j].isMine = true
+    gBoard[i][j].isShown = true
+
+    gGame.manuallyCounter--;
+
+    if (!gGame.manuallyCounter) {
+        hideAllMines()
+        setMinesNegsCount(gBoard)
+    }
+
+    updateManualBar()
+    renderBoard(gBoard)
+}
+
+function updateManualBar() {
+
+    var elOptBar = document.querySelector('.options-container')
+    var elManualBar = document.querySelector('.manually-mode')
+
+    if (gGame.isManuallyOn && gGame.manuallyCounter) {
+
+        elOptBar.classList.add('hide')
+        elManualBar.classList.remove('hide')
+
+        elManualBar.innerHTML = `Set ${gGame.manuallyCounter} mines on board`
+    } else {
+
+        elOptBar.classList.remove('hide')
+        elManualBar.classList.add('hide')
+    }
+
+}
+
+function hideAllMines() {
+
+    for (var i = 0; i < gLevel.SIZE; i++) {
+        for (var j = 0; j < gLevel.SIZE; j++) {
+            if (gBoard[i][j].isMine) gBoard[i][j].isShown = false
+        }
+    }
 }

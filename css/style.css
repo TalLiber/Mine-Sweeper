@@ -74,8 +74,9 @@ h1 {
 }
 
 .status-container,
-.level-container,
-.best-scores {
+.options-container,
+.best-scores,
+.manually-mode {
     background-color: #fa8ea9;
     height: 40px;
     width: 600px;
@@ -130,4 +131,8 @@ select {
 
 .safe-cell {
     background-color: peachpuff;
+}
+
+.hide {
+    display: none;
 }

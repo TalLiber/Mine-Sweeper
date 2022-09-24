@@ -11,7 +11,11 @@
 
 <body onload="initGame()">
     <h1>Mine Sweeper</h1>
-    <section class="level-container">
+    <div class="manually-mode hide">ddd</div>
+    <section class="options-container">
+        <button class="manually-create" onclick="manuallyCreate()">
+        manually create
+      </button>
         <button class="undo" onclick="undo()">undo</button>
         <button class="safe-click" onclick="safeClickStart(this)">
         Safe click
