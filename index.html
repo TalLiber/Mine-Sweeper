@@ -13,9 +13,10 @@
     <h1>Mine Sweeper</h1>
     <div class="manually-mode hide">ddd</div>
     <section class="options-container">
-        <button class="manually-create" onclick="manuallyCreate()">
+        <button class="manually-create" onclick="setManuallyMode()">
         manually create
       </button>
+        <button class="7-BOOM" onclick="setBoomMode()">7 BOOM!</button>
         <button class="undo" onclick="undo()">undo</button>
         <button class="safe-click" onclick="safeClickStart(this)">
         Safe click
@@ -26,6 +27,11 @@
         <button onclick="setLevel(8, 14)">Hard</button>
         <button onclick="setLevel(12, 32)">Expert</button>
     </section>
+    <div class="status-container">
+        <span class="timer"></span>
+        <span class="mines"></span>
+    </div>
+
     <!-- <div class="levels">
         <select name="" onchange="initGame(event.target.value)">
           <option value="BEGINNER_SIZE">Easy</option>
@@ -38,10 +44,6 @@
     </div>
     <div class="board-container"></div>
 
-    <div class="status-container">
-        <span class="timer"></span>
-        <span class="mines"></span>
-    </div>
     <div class="best-scores">d</div>
     <script src="js/main.js"></script>
     <script src="js/utils.js"></script>

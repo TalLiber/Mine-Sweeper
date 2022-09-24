@@ -6,17 +6,21 @@ function buildBoard() {
     //Return the created board
 
     const board = []
+    var cellIdxCounter = 0
 
     for (var i = 0; i < gLevel.SIZE; i++) {
         board.push([])
 
         for (var j = 0; j < gLevel.SIZE; j++) {
             board[i][j] = {
+                cellIdx: cellIdxCounter,
                 minesAroundCount: 0,
                 isShown: false,
                 isMine: false,
                 isMarked: false
             }
+
+            cellIdxCounter++;
         }
     }
 

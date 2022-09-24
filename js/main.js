@@ -13,6 +13,7 @@ var gGame = {
     isGameEnd: false,
     isHintOn: false,
     isManuallyOn: false,
+    isBoomOn: false,
     secsPassed: 0,
     shownCount: 0,
     markedCount: 0,
@@ -49,7 +50,7 @@ function getMinesPos() {
     for (var i = 0; i < gLevel.MINES; i++) {
         minesPos.push(poses.pop())
     }
-    console.log(minesPos)
+
     return minesPos
 }
 
@@ -58,7 +59,7 @@ function getRandomPos() {
 
     for (var i = 0; i < gLevel.SIZE; i++) {
         for (var j = 0; j < gLevel.SIZE; j++) {
-            if (i !== gFirstPos.i && j !== gFirstPos.j) poses.push({ i, j })
+            if (i !== gFirstPos.i || j !== gFirstPos.j) poses.push({ i, j })
         }
     }
     poses.sort((a, b) => 0.5 - Math.random())
@@ -103,7 +104,8 @@ function cellClicked(elCell, i, j) {
         gGame.isOn = true
         showTimer()
         gFirstPos = { i, j }
-        if (!gGame.isManuallyOn) setMinesRandom()
+        if (gGame.isBoomOn) setBoomMines()
+        else if (!gGame.isManuallyOn) setMinesRandom()
     }
 
 
@@ -149,7 +151,6 @@ function cellMarked(event, i, j) {
 function checkGameOver() {
     //TO DO: Game ends when all mines are marked, and all the other cells are shown
     const shownTotal = gLevel.SIZE * gLevel.SIZE - gLevel.MINES
-    console.log(shownTotal, gGame.shownCount, gGame.markedCount);
     if (gGame.markedCount === gLevel.MINES && gGame.shownCount === shownTotal) {
         console.log('winner');
         gameOver(WINNER)
@@ -414,7 +415,7 @@ function undo() {
     renderBoard(gBoard)
 }
 
-function manuallyCreate() {
+function setManuallyMode() {
     gGame.isManuallyOn = true
 
     updateManualBar()
@@ -452,7 +453,6 @@ function updateManualBar() {
         elOptBar.classList.remove('hide')
         elManualBar.classList.add('hide')
     }
-
 }
 
 function hideAllMines() {
@@ -460,6 +460,38 @@ function hideAllMines() {
     for (var i = 0; i < gLevel.SIZE; i++) {
         for (var j = 0; j < gLevel.SIZE; j++) {
             if (gBoard[i][j].isMine) gBoard[i][j].isShown = false
+        }
+    }
+}
+
+function setBoomMode() {
+    gGame.isBoomOn = true
+    initGame()
+}
+
+function setBoomMines() {
+
+    var minesCounter = gLevel.MINES
+
+    for (var i = 0; i < gLevel.SIZE; i++) {
+        for (var j = 0; j < gLevel.SIZE; j++) {
+
+            var currIdx = gBoard[i][j].cellIdx
+            if (!(currIdx % 7) || (currIdx % 10) === 7 ||
+                parseInt(currIdx / 10) === 7) {
+
+                if (i !== gFirstPos.i || j !== gFirstPos.j) {
+                    gBoard[i][j].isMine = true
+                    minesCounter--;
+
+                    if (!minesCounter) {
+                        setMinesNegsCount(gBoard)
+                        renderBoard(gBoard)
+                        gGame.isBoomOn = false
+                        return
+                    }
+                }
+            }
         }
     }
 }
