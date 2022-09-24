@@ -126,7 +126,9 @@ function cellMarked(event, i, j) {
 
     if (!gBoard[i][j].isMarked) {
         gBoard[i][j].isMarked = true
-        gGame.markedCount++
+        gGame.markedCount++;
+        gLastPoses.push({ i, j })
+
     } else {
         gBoard[i][j].isMarked = false
         gGame.markedCount--
@@ -376,13 +378,28 @@ function undo() {
     var lastMove = gLastPoses.pop()
 
     if (Array.isArray(lastMove)) {
+
         while (lastMove.length) {
             var expandMove = lastMove.pop()
             gBoard[expandMove.i][expandMove.j].isShown = false
+            gGame.shownCount--;
         }
-        console.log(lastMove);
-    } else {
+        console.log('lastMove', lastMove);
+
+    } else if (gBoard[lastMove.i][lastMove.j].isMarked) {
+
+        gBoard[lastMove.i][lastMove.j].isMarked = false
+        gGame.markedCount--;
+
+    } else if (gBoard[lastMove.i][lastMove.j].isMine) {
+
         gBoard[lastMove.i][lastMove.j].isShown = false
+        gGame.markedCount--;
+
+    } else {
+
+        gBoard[lastMove.i][lastMove.j].isShown = false
+        gGame.shownCount--;
     }
 
     renderBoard(gBoard)
