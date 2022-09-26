@@ -567,3 +567,43 @@ function updateMegaBar() {
     }
 
 }
+
+function exterminatorMode() {
+    if (gLevel.SIZE === 4) return
+    var mines = randomMines()
+    mines = getRandomMines(mines)
+
+    console.log(mines);
+    for (var i = 0; i < 3; i++) {
+        gBoard[mines[i].i][mines[i].j].isMine = false
+    }
+
+    gLevel.MINES -= 3
+    setMinesNegsCount(gBoard)
+    console.log(gBoard);
+
+}
+
+function randomMines() {
+    var mines = []
+
+    for (var i = 0; i < gLevel.SIZE; i++) {
+        for (var j = 0; j < gLevel.SIZE; j++) {
+            if (gBoard[i][j].isMine) mines.push({ i, j })
+        }
+    }
+    mines.sort((a, b) => 0.5 - Math.random())
+
+    console.log(mines);
+    return mines
+}
+
+function getRandomMines(mines) {
+    var randomMines = []
+
+    for (var i = 0; i < 3; i++) {
+        randomMines.push(mines.pop())
+    }
+
+    return randomMines
+}
