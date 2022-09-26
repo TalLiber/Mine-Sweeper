@@ -14,6 +14,8 @@ var gGame = {
     isHintOn: false,
     isManuallyOn: false,
     isBoomOn: false,
+    isMegaOn: false,
+    megaHintBlock: false,
     secsPassed: 0,
     shownCount: 0,
     markedCount: 0,
@@ -33,6 +35,8 @@ var gFirstPos = {}
 var gtimerInterval
 var gLastPoses = []
 var gLastExpandShownPoses = []
+var gMegaTop = null
+var gMegaBottom = null
 
 function initGame() {
     //TO DO: This is called when page loads
@@ -92,6 +96,10 @@ function cellClicked(elCell, i, j) {
     // document.addEventListener('contextmenu', event => event.preventDefault())
     if (gBoard[i][j].isShown || gBoard[i][j].isMarked) return
     if (gGame.isGameEnd) return
+    if (gGame.isMegaOn && !gGame.megaHintBlock) {
+        megaHintSelect(i, j)
+        return
+    }
     if (gGame.isManuallyOn && gGame.manuallyCounter) {
         setMinesManually(i, j)
         return
@@ -235,6 +243,11 @@ function resetGame() {
     gGame.isOn = false
     gGame.isGameEnd = false
     gGame.isManuallyOn = false
+    gGame.isMegaOn = false
+    gGame.megaHintBlock = false
+
+    gMegaTop = null
+    gMegaBottom = null
 
     clearInterval(gtimerInterval)
     var elTimer = document.querySelector('.status-container .timer')
@@ -254,6 +267,9 @@ function resetGame() {
 
     var elSafeBtn = document.querySelector('.safe-click')
     elSafeBtn.innerHTML = `Safe Click ${gGame.safeClicksCount} clicks available`
+
+    // var elMegaBar = document.querySelector('.mega-mode')
+
 }
 
 function setLevel(size, mines) {
@@ -494,4 +510,60 @@ function setBoomMines() {
             }
         }
     }
+}
+
+function megaHintMode() {
+    gGame.isMegaOn = true
+    updateMegaBar()
+}
+
+function megaHintSelect(i, j) {
+
+    if (!gMegaTop) gMegaTop = { i, j }
+    else {
+        gMegaBottom = { i, j }
+        megaHintExpose()
+    }
+
+    updateMegaBar()
+}
+
+function megaHintExpose() {
+
+    for (var i = gMegaTop.i; i <= gMegaBottom.i; i++) {
+        for (var j = gMegaTop.j; j <= gMegaBottom.j; j++) {
+            gBoard[i][j].isShown = !gBoard[i][j].isShown
+        }
+    }
+
+    renderBoard(gBoard)
+
+    if (gGame.isMegaOn) {
+        gGame.isMegaOn = false
+        gGame.megaHintBlock = true
+        updateMegaBar()
+        setTimeout(megaHintExpose, 2000)
+    }
+}
+
+function updateMegaBar() {
+
+    var elOptBar = document.querySelector('.options-container')
+    var elMegaBar = document.querySelector('.mega-mode')
+
+    if (gGame.isMegaOn && !gGame.megaHintBlock) {
+
+        elOptBar.classList.add('hide')
+        elMegaBar.classList.remove('hide')
+
+        elMegaBar.innerHTML = (!gMegaTop) ?
+            `Click the area’s top-left cell` : `Click the area’s bottom-right cell`
+
+
+    } else {
+
+        elOptBar.classList.remove('hide')
+        elMegaBar.classList.add('hide')
+    }
+
 }

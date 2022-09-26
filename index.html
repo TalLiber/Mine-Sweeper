@@ -11,11 +11,13 @@
 
 <body onload="initGame()">
     <h1>Mine Sweeper</h1>
-    <div class="manually-mode hide">ddd</div>
+    <div class="manually-mode hide"></div>
+    <div class="mega-mode hide"></div>
     <section class="options-container">
         <button class="manually-create" onclick="setManuallyMode()">
         manually create
       </button>
+        <button class="Mega-hint" onclick="megaHintMode()">Mega Hint</button>
         <button class="7-BOOM" onclick="setBoomMode()">7 BOOM!</button>
         <button class="undo" onclick="undo()">undo</button>
         <button class="safe-click" onclick="safeClickStart(this)">
