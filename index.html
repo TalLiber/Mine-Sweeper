@@ -5,8 +5,9 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Mine Sweeper</title>
     <link rel="stylesheet" href="css/style.css" />
+    <title>Mine Sweeper</title>
+    <link rel="icon" type="image/x-icon" href="favicon.ico" />
 </head>
 
 <body onload="initGame()">
@@ -14,26 +15,21 @@
     <div class="manually-mode hide"></div>
     <div class="mega-mode hide"></div>
     <section class="options-container">
-        <button class="manually-create" onclick="setManuallyMode()">
-        manually create
-      </button>
-        <button class="exterminator" onclick="exterminatorMode()">
+        <span class="manually-create" onclick="setManuallyMode()">
+        Manually Create
+      </span> |
+        <span class="exterminator" onclick="exterminatorMode()">
         Exterminator
-      </button>
-        <button class="mega-hint" onclick="megaHintMode()">Mega Hint</button>
-        <button class="7-BOOM" onclick="setBoomMode()">7 BOOM!</button>
-        <button class="undo" onclick="undo()">undo</button>
-        <button class="safe-click" onclick="safeClickStart(this)">
-        Safe click
-      </button>
-        <span onclick="hintClicked(this)" class="hints"></span>
-        <span class="lives"></span>
-        <button onclick="setLevel(4, 2)">Easy</button>
-        <button onclick="setLevel(8, 14)">Hard</button>
-        <button onclick="setLevel(12, 32)">Expert</button>
+      </span> | <span class="mega-hint" onclick="megaHintMode()">Mega Hint</span> |
+        <span class="7-BOOM" onclick="setBoomMode()">7 BOOM!</span> |
+        <span class="undo" onclick="undo()">Undo</span> |
+        <span class="safe-click" onclick="safeClickStart(this)">
+        Safe Click
+      </span>
     </section>
     <div class="status-container">
-        <span class="timer"></span>
+        <span onclick="hintClicked(this)" class="hints"></span>
+        <span class="lives"></span>
         <span class="mines"></span>
     </div>
 
@@ -47,9 +43,16 @@
     <div class="start-btn-container">
         <button class="start-btn" onclick="initGame(gLevel)">😃</button>
     </div>
-    <div class="board-container"></div>
-
+    <section class="board-container"></section>
+    <section class="timer"></section>
+    <section class="levels-container">
+        <span class="level easy level-selcted" onclick="setLevel(this, 4, 2)">Easy</span
+      >
+      | <span class="level hard" onclick="setLevel(this, 8, 14)">Hard</span> |
+        <span class="level expert" onclick="setLevel(this, 12, 32)">Expert</span>
+    </section>
     <div class="best-scores">d</div>
+
     <script src="js/main.js"></script>
     <script src="js/utils.js"></script>
     <script src="js/game.js"></script>

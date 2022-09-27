@@ -1,12 +1,12 @@
 'use strict'
 
-const MINE = '💣'
-const MARK = '⭐️'
-const START_BTN = '😃'
-const LOOSER = '😵'
-const WINNER = '🤩'
-const LIFE = '❤️'
-const HINT = '💡'
+const MINE = `<img src="img/bomb.png" class="mine" />`
+const MARK = `<img src="img/star.png" class="star" />`
+const START_BTN = `<img src="img/start.png" class="start" />`
+const LOOSER = `<img src="img/looser.png" class="looser" />`
+const WINNER = `<img src="img/winner.png" class="winner" />`
+const LIFE = `<img src="img/heart.png" class="life" />`
+const HINT = `<img src="img/hint.png" class="hint" />`
 
 var gGame = {
     isOn: false,
@@ -45,7 +45,7 @@ function initGame() {
     gBoard = buildBoard()
     renderBoard(gBoard)
     startBestScore()
-    showBestScores()
+    checkBestScore()
 }
 
 function getMinesPos() {
@@ -216,7 +216,7 @@ function updateMinesShow() {
 }
 
 function showTimer() {
-    var timer = document.querySelector('.status-container .timer')
+    var timer = document.querySelector('.timer')
     var start = Date.now()
 
     gtimerInterval = setInterval(function() {
@@ -228,7 +228,7 @@ function showTimer() {
         ms = ms.substring(ms.length - 3, ms.length)
 
         gGame.secsPassed = `${secs}:${ms}`
-        timer.innerText = `Elapsed Time: ${gGame.secsPassed}`
+        timer.innerHTML = `<span>Time:</span> ${gGame.secsPassed}`
     }, 100)
 }
 
@@ -250,8 +250,8 @@ function resetGame() {
     gMegaBottom = null
 
     clearInterval(gtimerInterval)
-    var elTimer = document.querySelector('.status-container .timer')
-    elTimer.innerHTML = `Elapsed Time: 00:000`
+    var elTimer = document.querySelector('.timer')
+    elTimer.innerHTML = `<span>Time:</span> 00:000`
 
     var elHints = document.querySelector('.hints')
     elHints.innerHTML = `${HINT} ${HINT} ${HINT}`
@@ -266,15 +266,23 @@ function resetGame() {
     elBtn.innerHTML = `${START_BTN}`
 
     var elSafeBtn = document.querySelector('.safe-click')
-    elSafeBtn.innerHTML = `Safe Click ${gGame.safeClicksCount} clicks available`
+    elSafeBtn.innerHTML = `Safe Click (${gGame.safeClicksCount})`
 
     // var elMegaBar = document.querySelector('.mega-mode')
 
 }
 
-function setLevel(size, mines) {
+function setLevel(elCurrLevel, size, mines) {
     gLevel.SIZE = size
     gLevel.MINES = mines
+
+    var elLevel = document.querySelectorAll('.level')
+
+    for (var i = 0; i < 3; i++) {
+        elLevel[i].classList.remove('level-selcted')
+    }
+
+    elCurrLevel.classList.add('level-selcted')
 
     initGame()
 }
@@ -288,7 +296,7 @@ function checkLives(idxI, idxJ) {
         for (var i = 0; i < gGame.livesCount; i++) {
             livesStr += `${LIFE} `
         }
-        elLives.innerText = livesStr
+        elLives.innerHTML = livesStr
 
         gBoard[idxI][idxJ].isShown = true
         gLastPoses.push({ i: idxI, j: idxJ })
@@ -354,34 +362,43 @@ function startBestScore() {
 }
 
 function checkBestScore() {
+    var currBestScore
+
     if (gLevel.SIZE === 4) {
-        if (gGame.secsPassed < localStorage.getItem('bestEasy')) {
+        currBestScore = localStorage.getItem('bestEasy')
+
+        if (gGame.secsPassed < currBestScore) {
             localStorage.setItem('bestEasy', gGame.secsPassed)
+            currBestScore = gGame.secsPassed
         }
+        console.log(currBestScore);
     }
 
     if (gLevel.SIZE === 8) {
-        if (gGame.secsPassed < localStorage.getItem('bestHard')) {
+        currBestScore = localStorage.getItem('bestHard')
+
+        if (gGame.secsPassed < currBestScore) {
             localStorage.setItem('bestHard', gGame.secsPassed)
+            currBestScore = gGame.secsPassed
         }
     }
 
     if (gLevel.SIZE === 12) {
-        if (gGame.secsPassed < localStorage.getItem('bestExpert')) {
+        currBestScore = localStorage.getItem('bestExpert')
+
+        if (gGame.secsPassed < currBestScore) {
             localStorage.setItem('bestExpert', gGame.secsPassed)
+            currBestScore = gGame.secsPassed
         }
     }
 
-    showBestScores()
+    showBestScores(currBestScore)
 }
 
-function showBestScores() {
+function showBestScores(currBestScore = 0) {
     var elBestScores = document.querySelector('.best-scores')
-    var bestScoreEasy = localStorage.getItem('bestEasy')
-    var bestScoreHard = localStorage.getItem('bestHard')
-    var bestScoreExpert = localStorage.getItem('bestExpert')
 
-    elBestScores.innerHTML = `Best easy score: ${bestScoreEasy} Best Hard score: ${bestScoreHard} Best Expert Score: ${bestScoreExpert}`
+    elBestScores.innerHTML = `Best Score: ${currBestScore}`
 }
 
 function safeClickStart(elBtn) {
@@ -394,7 +411,7 @@ function safeClickStart(elBtn) {
     elCell.classList.add('safe-cell')
 
     gGame.safeClicksCount--;
-    elBtn.innerHTML = `Safe Click ${gGame.safeClicksCount} clicks available`
+    elBtn.innerHTML = `Safe Click (${gGame.safeClicksCount})`
 
     setTimeout(() => { elCell.classList.remove('safe-cell') }, 3000)
 }
